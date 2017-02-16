@@ -7,7 +7,7 @@ DyAnnotationExtractor is software for extracting annotations (highlighted text a
 Imagine you have ebook (PDF) which is 100 pages long. While reading the book, 
 you **highlight** the important parts in your favorite reader:
 
-![](work/documents/Highlight_Example_1.png)
+![](Highlight_Example_1.png)
 
 Then use the DyAnnotationExtractor tool to get just the highlighted parts. 
 

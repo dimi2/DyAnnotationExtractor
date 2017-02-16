@@ -1,0 +1,129 @@
+// (Gradle) Build script for the project.
+defaultTasks 'dist'
+
+apply plugin: 'java'
+
+// Define project specific directories (we do not use the default project structure
+// (because it is contra-productive).
+defaultTasks 'dist'
+buildDir = 'build'
+def workDir = 'work'
+def distDir = "$buildDir/distributions"
+def autoDocDir = "$distDir/autodoc"
+def minJavaVersion = 1.8
+def minGradleVersion = 3.0
+
+// Setup plugin specific variables.
+sourceCompatibility = minJavaVersion
+version = projectVersion
+libsDirName = distDir
+
+// External libraries loader.
+repositories {
+    jcenter()
+    flatDir { dirs "${System.properties['user.home']}/.gradle/local" }
+}
+
+dependencies {
+    compile "com.itextpdf:kernel:7.0.1"
+
+    testCompile "org.testng:testng:6.10"
+}
+// Additional JAR directories (when working without dependency management).
+dependencies {
+    compile fileTree(dir: "$workDir/library", include: ['*.jar'])
+    compile fileTree(dir: "$workDir/testing/dev-library", include: ['*.jar'])
+}
+
+test.useTestNG()
+
+// Setup the project source and compilation directories.
+sourceSets {
+    main {
+        java {
+            srcDir "sources/main/java"
+        }
+        output.classesDir = "$workDir/program"
+    }
+    test {
+        java {
+            srcDir "sources/test/java"
+        }
+        output.classesDir = "$workDir/tests"
+        output.resourcesDir = "$workDir/testing/resource"
+    }
+}
+
+compileJava {
+    options.encoding = "UTF-8"
+}
+
+compileTestJava {
+    options.encoding = "UTF-8"
+}
+
+jar {
+    baseName = projectName
+    classifier = 'binary'
+    manifest {
+        attributes(
+            'Specification-Title': projectName,
+            'Specification-Version': projectVersion,
+            'Implementation-Vendor': 'DAstarot',
+            'Main-Class': 'dsk.anotex.ConsoleRunner'
+        )
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+task checkEnv {
+    description = 'Check the build pre-conditions.'
+
+    // Check the Java version.
+    def javaVersion = (System.getProperty('java.version') =~ /^\d+(\.\d+)?/)[0][0] as double
+    if (javaVersion < minJavaVersion) { 
+        throw new GradleException("Inappropriate Java version ($javaVersion). Needs ($minJavaVersion) or higher.") 
+    }
+
+    // Check the Gradle version.
+    def gradleVersion = (gradle.gradleVersion =~ /^\d+(\.\d+)?/)[0][0] as double
+    if (gradleVersion < minGradleVersion) { 
+        throw new GradleException("Inappropriate Gradle version ($gradleVersion). Needs ($minGradleVersion) or higher.") 
+    }
+}
+
+javadoc {
+    destinationDir = file(autoDocDir)
+}
+
+task generateDocs {
+    description = 'Generates project documentation.'
+    dependsOn javadoc
+}
+
+task dist(type: Zip, dependsOn: ['checkEnv', 'clean', 'build']) {
+    description = 'Create project distribution.'
+    classifier = 'dist'
+    destinationDir = file(distDir)
+    from (workDir) {
+        exclude(['temp', 'tests'])
+    }
+    from (configurations.runtime) {
+        into 'library'
+    }
+    includeEmptyDirs = false
+    into projectName
+}
+clean.mustRunAfter checkEnv
+build.mustRunAfter clean
+generateDocs.mustRunAfter build
+jar.mustRunAfter test
+
