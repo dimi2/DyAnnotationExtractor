@@ -1,3 +1,19 @@
 language: java
 jdk:
   - oraclejdk8
+
+script:
+  - gradle dist
+deploy:
+  provider: releases
+  api_key:
+    secure: "015pOfqAAtemG/IJ+A/xNZoKCe6+dbP/9ZED9YcTILmHALnwx7RMrIz+u07Q285/xLg4eX3jsFvNXa0LwLyHpI0mrnMX8sewheUeYITkwEkvnIIyBueUi80cTRFDZQsamesFtp2nILI
+UblpVnEKWZK50jSPOfb8L/V0Ocqd3/wYeDCrXsAhLQgfmauwxBtN7ZqmN9CSRyVllSdecNqfG8e10WM0u4z12Nj5dUCqISRgbTghtB7zIN1AJgvn6wiNSbjpnbcDAbn1ohYiOx/tVFJkv70XrebkRw
+R6UedQWShQ1PgeORO04+JAmuLFRGxJV5+OqSr07nGj849bGxJ489ZPdIEVBSxcDw/2gOMOWyYpRoRqUnMZdNQu8AmCc0YtT/S7bIFTqA/oWmtnxWWxqJSfJ8YF/Qv/8blqnuaYpcZwoX6sStNT21kj
+vSlQoz3TXdwZ2NkIntMVwnXtqRmGnmqLcvsHWyrwkfPwG46IeevMdkoeBN9STda3RQD11dh4/bDPmOFZk6ls1txMPynZsK5EGAEQjCpv9n1YFFEc8RY+mgDQICfSfF2kfH+lmCnKgJ/5AJTzVBHd+k
+ccTfcQiWcSRaDbQQO9VtvKVuFPH4i1c9ssqThmQakh5JFnvstC0qFwVU2z7ZeROgp6jgevTLjpLfXz4A1PEUdzHRpiWFHA="
+  file_glob: true
+  file: "build/distributions/*"
+  skip_cleanup: true
+  on:
+    tags
