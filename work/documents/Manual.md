@@ -34,23 +34,24 @@ Now you have extract of the book which is not 100 but 5-6 pages. You can skim ju
 
 ## Download ##
 
-Get the [binary distribution](https://github.com/dyannotationextractor/anotex/releases/latest).
+Get the [latest release](https://github.com/dimi2/DyAnnotationExtractor/releases/latest).
 
-Get the [source code](https://github.com/dyannotationextractor/anotex/releases/latest).
 
-TODO: curl command for download
+
+There are separate files for: distribution, binary and sources.<br/>
+End users need to download only the distribution.
 
 ## Installation ##
 
-Extract the downloaded archive in some local directory.
 
-TODO: shell command to extract
 
-## License ##
 
-This software is distributed under the terms of LGPL license.
 
-TODO: Link to full license text
+
+
+Extract the downloaded archive in some local directory.<br/>
+Run the provided 'DyAnnotationExtractor' script to perform extraction.
+
 
 ## Dependencies ##
 
