@@ -11,7 +11,7 @@ def workDir = 'work'
 def distDir = "$buildDir/distributions"
 def autoDocDir = "$distDir/autodoc"
 def minJavaVersion = 1.8
-def minGradleVersion = 3.0
+def minGradleVersion = 2.0
 
 // Setup plugin specific variables.
 sourceCompatibility = minJavaVersion
