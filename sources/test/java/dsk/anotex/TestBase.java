@@ -6,8 +6,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Base functionality for unit tests.
@@ -163,6 +165,30 @@ public abstract class TestBase {
                 throw new IllegalArgumentException(message, e);
             }
         }
+    }
+
+    /**
+     * Calculate SHA-256 checksum on given text (considering new line separator differences
+     * between different OS).
+     * @param text Input text.
+     * @return Calculated checksum.
+     */
+    protected String calcChecksum(String text) {
+        String checksum = null;
+        if ((text != null) && (!text.isEmpty())) {
+            if (digester == null) {
+                try {
+                    digester = MessageDigest.getInstance("SHA-256");
+                }
+                catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            text = text.replace("\r", ""); // Unify the new line characters.
+            digester.update(text.getBytes(StandardCharsets.UTF_8));
+            checksum = String.format("%x", new BigInteger(1, digester.digest()));
+        }
+        return checksum;
     }
 
 }
