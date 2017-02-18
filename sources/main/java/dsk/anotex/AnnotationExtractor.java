@@ -2,9 +2,18 @@ package dsk.anotex;
 
 import dsk.anotex.core.AnnotatedDocument;
 import dsk.anotex.core.FileFormat;
+import dsk.anotex.exporter.AnnotationExporter;
+import dsk.anotex.exporter.ExporterFactory;
 import dsk.anotex.importer.AnnotationImporter;
 import dsk.anotex.importer.ImporterFactory;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -20,16 +29,86 @@ public class AnnotationExtractor {
     }
 
     /**
-     * Extract annotations from given document file.
+     * Execute annotation extraction from file.
+     * @param inputFile Input file name.
+     * @param settings Additional export settings.
+     * @param outputFile Output file name. If null - default will be used. If the output file already
+     * exists, it will be overwritten.
+     * @return The name of the created output file.
+     */
+    public String extractAnnotations(String inputFile, Map<String, Object> settings, String outputFile) {
+        // Extract the annotations.
+        AnnotatedDocument document = readAnnotations(inputFile);
+
+        // Get appropriate exporter.
+        String sFormat = (String) settings.get(Constants.EXPORT_FORMAT);
+        FileFormat exportFormat = FileFormat.getByName(sFormat);
+        if (sFormat == null) {
+            // Use the default export format.
+            exportFormat = getDefaultExportFormat();
+        }
+        AnnotationExporter exporter = ExporterFactory.createExporter(exportFormat);
+
+        // Write the output.
+        if (outputFile == null) {
+            // Use default output file.
+            outputFile = inputFile + exportFormat.getExtension();
+        }
+        try (Writer output = getOutputWriter(outputFile)) {
+            exporter.export(document, settings, output);
+            output.close();
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Extraction error", e);
+        }
+        return outputFile;
+    }
+
+    /**
+     * Read annotations from given document file.
      * @param fileName Document file name.
      * @return Document annotations.
      */
-    public AnnotatedDocument extractAnnotations(String fileName) {
+    public AnnotatedDocument readAnnotations(String fileName) {
         FileFormat format = detectFileFormat(fileName);
         AnnotationImporter importer = ImporterFactory.createImporter(format);
         AnnotatedDocument document = importer.readAnnotations(fileName);
         postProcess(document);
         return document;
+    }
+
+    /**
+     * Get the default export format.
+     * @return Export format.
+     */
+    protected FileFormat getDefaultExportFormat() {
+        return FileFormat.MARKDOWN;
+    }
+
+    /**
+     * Get output writer for specified input file.
+     * @param outputFile Output file name.
+     * @return Output writer.
+     */
+    protected Writer getOutputWriter(String outputFile) {
+        File outFile = new File(outputFile);
+
+        // Create necessary directories fore the output path.
+        File outFileDir = outFile.getParentFile();
+        if (outFileDir != null) {
+            outFileDir.mkdirs();
+        }
+
+        // Crate buffered file writer.
+        Writer writer;
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
+                StandardCharsets.UTF_8));
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return writer;
     }
 
     /**

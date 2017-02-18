@@ -46,5 +46,5 @@ Run the provided 'DyAnnotationExtractor' script to perform extraction.
 
 ## Dependencies ##
 
-- iTextPdf 7.0.1+ (PDF handling library)
+- iTextPdf 7.0.2+ (PDF handling library)
 

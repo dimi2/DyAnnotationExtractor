@@ -1,18 +1,7 @@
 package dsk.anotex;
 
-import dsk.anotex.core.AnnotatedDocument;
-import dsk.anotex.core.FileFormat;
-import dsk.anotex.exporter.AnnotationExporter;
-import dsk.anotex.exporter.ExporterFactory;
 import dsk.anotex.util.CommandLineParser;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,68 +14,16 @@ public class ConsoleRunner {
     public static final String ARG_OUTPUT = "output";
     public static final String ARG_HELP = "help";
 
-    public ConsoleRunner() {
-    }
-
     /**
      * Execute annotation extraction from file.
      * @param inputFile Input file name.
      * @param settings Additional export settings.
-     * @param outputFile Output file name. If null - default will be used. If the output file already
-     * exists, it will be overwritten.
-     */
-    public void extract(String inputFile, Map<String, Object> settings, String outputFile) {
-        // Read the annotations.
-        AnnotationExtractor extractor = new AnnotationExtractor();
-        AnnotatedDocument document = extractor.extractAnnotations(inputFile);
-
-        // Get appropriate exporter.
-        String sFormat = (String) settings.get(Constants.EXPORT_FORMAT);
-        FileFormat exportFormat = FileFormat.getByName(sFormat);
-        AnnotationExporter exporter = ExporterFactory.createExporter(exportFormat);
-
-        // Write the output.
-        try (Writer output = getOutputWriter(outputFile)) {
-            exporter.export(document, settings, output);
-            output.close();
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Extraction error", e);
-        }
-    }
-
-    /**
-     * Get the default export format.
-     * @return Export format.
-     */
-    protected FileFormat getDefaultExportFormat() {
-        return FileFormat.MARKDOWN;
-    }
-
-    /**
-     * Get output writer for specified input file.
      * @param outputFile Output file name.
-     * @return Output writer.
      */
-    protected Writer getOutputWriter(String outputFile) {
-        File outFile = new File(outputFile);
-
-        // Create necessary directories fore the output path.
-        File outFileDir = outFile.getParentFile();
-        if (outFileDir != null) {
-            outFileDir.mkdirs();
-        }
-
-        // Crate buffered file writer.
-        Writer writer;
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
-                StandardCharsets.UTF_8));
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return writer;
+    public void doExtract(String inputFile, Map<String, Object> settings, String outputFile) {
+        printMessage(String.format("Reading input document: '%s'", inputFile));
+        String outFile = new AnnotationExtractor().extractAnnotations(inputFile, settings, outputFile);
+        printMessage(String.format("Annotations extracted to: '%s'", outFile));
     }
 
     /**
@@ -146,18 +83,12 @@ public class ConsoleRunner {
 
         String inputFile = parser.getArgumentValue(ARG_INPUT);
         if ((inputFile != null)) {
+            // Holder for additional execution settings.
             HashMap<String, Object> settings = new HashMap<>();
-            // Currently we support only one export format, se we do not read this from the command line.
-            FileFormat exportFormat = runner.getDefaultExportFormat();
-            settings.put(Constants.EXPORT_FORMAT, exportFormat.getName());
             // Retrieve the output file name.
             String outputFile = parser.getArgumentValue(ARG_OUTPUT);
-            if (outputFile == null) {
-                // Use default output file name.
-                outputFile = inputFile + exportFormat.getExtension();
-            }
             // Execute the annotation extraction.
-            runner.extract(inputFile, settings, outputFile);
+            runner.doExtract(inputFile, settings, outputFile);
         }
         else {
             // Print additional information.

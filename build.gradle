@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-    compile "com.itextpdf:kernel:7.0.1"
+    compile "com.itextpdf:kernel:7.0.2"
 
     testCompile "org.testng:testng:6.10"
 }
