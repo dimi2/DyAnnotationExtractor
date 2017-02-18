@@ -1,4 +1,6 @@
-package dsk.anotex.export;
+package dsk.anotex.exporter;
+
+import dsk.anotex.core.FileFormat;
 
 /**
  * Annotation exporter factory.
@@ -16,9 +18,9 @@ public class ExporterFactory {
      * @param format Desired file format.
      * @return Exporter instance for this format.
      */
-    public static AnnotationExporter createExporter(ExportFormat format) {
+    public static AnnotationExporter createExporter(FileFormat format) {
         AnnotationExporter exporter;
-        if (ExportFormat.MARKDOWN == format) {
+        if (FileFormat.MARKDOWN == format) {
             exporter = new MarkdownExporter();
         }
         else {

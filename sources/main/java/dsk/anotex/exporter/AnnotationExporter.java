@@ -1,4 +1,4 @@
-package dsk.anotex.export;
+package dsk.anotex.exporter;
 
 import dsk.anotex.core.AnnotatedDocument;
 

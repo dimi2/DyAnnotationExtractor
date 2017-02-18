@@ -1,9 +1,9 @@
 package dsk.anotex;
 
 import dsk.anotex.core.AnnotatedDocument;
-import dsk.anotex.export.AnnotationExporter;
-import dsk.anotex.export.ExportFormat;
-import dsk.anotex.export.ExporterFactory;
+import dsk.anotex.core.FileFormat;
+import dsk.anotex.exporter.AnnotationExporter;
+import dsk.anotex.exporter.ExporterFactory;
 import dsk.anotex.util.CommandLineParser;
 
 import java.io.BufferedWriter;
@@ -38,11 +38,11 @@ public class ConsoleRunner {
     public void extract(String inputFile, Map<String, Object> settings, String outputFile) {
         // Read the annotations.
         AnnotationExtractor extractor = new AnnotationExtractor();
-        AnnotatedDocument document = extractor.readAnnotations(inputFile);
+        AnnotatedDocument document = extractor.extractAnnotations(inputFile);
 
         // Get appropriate exporter.
         String sFormat = (String) settings.get(Constants.EXPORT_FORMAT);
-        ExportFormat exportFormat = ExportFormat.getByName(sFormat);
+        FileFormat exportFormat = FileFormat.getByName(sFormat);
         AnnotationExporter exporter = ExporterFactory.createExporter(exportFormat);
 
         // Write the output.
@@ -59,8 +59,8 @@ public class ConsoleRunner {
      * Get the default export format.
      * @return Export format.
      */
-    protected ExportFormat getDefaultExportFormat() {
-        return ExportFormat.MARKDOWN;
+    protected FileFormat getDefaultExportFormat() {
+        return FileFormat.MARKDOWN;
     }
 
     /**
@@ -147,8 +147,8 @@ public class ConsoleRunner {
         String inputFile = parser.getArgumentValue(ARG_INPUT);
         if ((inputFile != null)) {
             HashMap<String, Object> settings = new HashMap<>();
-            // Currently we support only one export format.
-            ExportFormat exportFormat = runner.getDefaultExportFormat();
+            // Currently we support only one export format, se we do not read this from the command line.
+            FileFormat exportFormat = runner.getDefaultExportFormat();
             settings.put(Constants.EXPORT_FORMAT, exportFormat.getName());
             // Retrieve the output file name.
             String outputFile = parser.getArgumentValue(ARG_OUTPUT);

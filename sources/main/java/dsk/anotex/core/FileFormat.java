@@ -1,9 +1,10 @@
-package dsk.anotex.export;
+package dsk.anotex.core;
 
 /**
- * Export formats enumeration.
+ * File format enumeration.
  */
-public enum ExportFormat {
+public enum FileFormat {
+    PDF("Pdf", ".pdf"),
     MARKDOWN("Markdown", ".md");
 
     String name;
@@ -17,14 +18,14 @@ public enum ExportFormat {
         return extension;
     }
 
-    ExportFormat(String name, String fileExtension) {
+    FileFormat(String name, String fileExtension) {
         this.name = name;
         this.extension = fileExtension;
     }
 
-    public static ExportFormat getByName(String name) {
-        ExportFormat match = null;
-        for (ExportFormat v : values()) {
+    public static FileFormat getByName(String name) {
+        FileFormat match = null;
+        for (FileFormat v : values()) {
             if (v.getName().equals(name)) {
                 match = v;
                 break;
