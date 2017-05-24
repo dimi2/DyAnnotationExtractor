@@ -36,8 +36,6 @@ dependencies {
     compile fileTree(dir: "$workDir/testing/dev-library", include: ['*.jar'])
 }
 
-test.useTestNG()
-
 // Setup the project source and compilation directories.
 sourceSets {
     main {
