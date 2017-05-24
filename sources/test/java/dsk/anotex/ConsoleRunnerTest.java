@@ -1,13 +1,13 @@
 package dsk.anotex;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class ConsoleRunnerTest extends TestBase {
 
-    @BeforeMethod
+    @Before
     public void beforeEach() {
         cleanTempDirectory();
     }

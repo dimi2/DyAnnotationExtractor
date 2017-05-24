@@ -3,13 +3,13 @@ package dsk.anotex.exporter;
 import dsk.anotex.TestBase;
 import dsk.anotex.core.AnnotatedDocument;
 import dsk.anotex.core.Annotation;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class MarkdownExporterTest extends TestBase {
 

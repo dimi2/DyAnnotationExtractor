@@ -26,8 +26,9 @@ repositories {
 
 dependencies {
     compile "com.itextpdf:kernel:7.0.2"
+    compile "org.slf4j:slf4j-simple:1.7.13"
 
-    testCompile "org.testng:testng:6.10"
+    testCompile "junit:junit:4.12"
 }
 // Additional JAR directories (when working without dependency management).
 dependencies {

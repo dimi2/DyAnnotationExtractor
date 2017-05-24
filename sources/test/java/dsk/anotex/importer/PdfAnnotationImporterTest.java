@@ -3,11 +3,11 @@ package dsk.anotex.importer;
 import dsk.anotex.TestBase;
 import dsk.anotex.core.AnnotatedDocument;
 import dsk.anotex.core.Annotation;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.util.List;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class PdfAnnotationImporterTest extends TestBase {
 

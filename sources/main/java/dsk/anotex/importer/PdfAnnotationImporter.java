@@ -122,6 +122,7 @@ public class PdfAnnotationImporter implements AnnotationImporter {
         if (text != null) {
             annotation = new Annotation();
             text = stripUnwantedChunks(text);
+            text = removePollutionChars(text);
             annotation.setText(text);
         }
         return annotation;
@@ -199,6 +200,21 @@ public class PdfAnnotationImporter implements AnnotationImporter {
     protected String stripUnwantedChunks(String text) {
         text = text.replaceFirst("^\\p{javaLowerCase}?[.?!]? ", "")
             .replaceFirst(" \\p{IsAlphabetic}?$", "");
+        text = stripDoubleQuotes(text);
+        return text;
+    }
+
+    /**
+     * Remove the pollution characters from the annotation text. These characters appear, without being
+     * part of the original text:
+     * <ul>
+     *     <li>Tab chars appear between words if the original text it aligned on both sides.</li>
+     * </ul>
+     * @param text The text to clean.
+     * @return Cleaned text.
+     */
+    protected String removePollutionChars(String text) {
+        text = text.replaceAll("\t", " ");
         text = stripDoubleQuotes(text);
         return text;
     }
