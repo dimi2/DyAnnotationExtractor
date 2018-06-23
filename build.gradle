@@ -3,13 +3,18 @@ defaultTasks 'dist'
 
 apply plugin: 'java'
 
-// Define project specific directories (we do not use the default project structure
-// (because it is contra-productive).
-defaultTasks 'dist'
-buildDir = 'build'
-def workDir = 'work'
+// Define project specific directories.
+def workDir = "$projectDir/work"
+def programDirName = 'program'
+def programDir = "$workDir/$programDirName"
+def testsDirName = 'tests'
+def testsDir = "$workDir/$testsDirName"
+def libraryDirName = 'library'
+def libraryDir = "$workDir/$libraryDirName"
 def distDir = "$buildDir/distributions"
 def autoDocDir = "$distDir/autodoc"
+def tempDirName = 'temp'
+def tempDir = "$workDir/$tempDirName"
 def minJavaVersion = 1.8
 def minGradleVersion = 2.0
 
@@ -25,8 +30,8 @@ repositories {
 }
 
 dependencies {
-    compile "com.itextpdf:kernel:7.0.2"
-    compile "org.slf4j:slf4j-simple:1.7.13"
+    compile "com.itextpdf:kernel:7.1.2"
+    compile "org.slf4j:slf4j-simple:1.7.25"
 
     testCompile "junit:junit:4.12"
 }
@@ -40,16 +45,30 @@ dependencies {
 sourceSets {
     main {
         java {
-            srcDir "sources/main/java"
+            srcDir "source/main/java"
+            outputDir = file(programDir)
         }
-        output.classesDir = "$workDir/program"
     }
     test {
         java {
-            srcDir "sources/test/java"
+            srcDir "source/test/java"
+            outputDir = file(testsDir)
         }
-        output.classesDir = "$workDir/tests"
-        output.resourcesDir = "$workDir/testing/resource"
+    }
+}
+
+// Force IntelliJ IDEA development environment to use the same build directories as Gradle.
+apply plugin: 'idea'
+idea {
+    module {
+        //inheritOutputDirs = false
+        outputDir file(programDir)
+        testOutputDir file(testsDir)
+        // TODO: Check why this exclusion is ignored by Intellij.
+        excludeDirs -= file(workDir)
+        excludeDirs += [file(libraryDir), file(tempDir)]
+        downloadJavadoc = true
+        downloadSources = true
     }
 }
 
@@ -60,6 +79,9 @@ compileJava {
 compileTestJava {
     options.encoding = "UTF-8"
 }
+
+// Check the preconditions before attempting build.
+build.dependsOn('checkEnv')
 
 jar {
     baseName = projectName
@@ -87,15 +109,17 @@ task checkEnv {
     description = 'Check the build pre-conditions.'
 
     // Check the Java version.
-    def javaVersion = (System.getProperty('java.version') =~ /^\d+(\.\d+)?/)[0][0] as double
-    if (javaVersion < minJavaVersion) { 
-        throw new GradleException("Inappropriate Java version ($javaVersion). Needs ($minJavaVersion) or higher.") 
+    def javaVersion = (System.getProperty('java.version') =~ /^\d+\.\d+/)[0] as double
+    if (javaVersion < minJavaVersion) {
+        throw new GradleException("Inappropriate Java version ($javaVersion). " +
+                "Needs ($minJavaVersion) or higher.")
     }
 
     // Check the Gradle version.
-    def gradleVersion = (gradle.gradleVersion =~ /^\d+(\.\d+)?/)[0][0] as double
-    if (gradleVersion < minGradleVersion) { 
-        throw new GradleException("Inappropriate Gradle version ($gradleVersion). Needs ($minGradleVersion) or higher.") 
+    def gradleVersion = (gradle.gradleVersion =~ /^\d+\.\d+/)[0] as double
+    if (gradleVersion < minGradleVersion) {
+        throw new GradleException("Inappropriate Gradle version ($gradleVersion). " +
+                "Needs ($minGradleVersion) or higher.")
     }
 }
 
@@ -103,26 +127,31 @@ javadoc {
     destinationDir = file(autoDocDir)
 }
 
-task generateDocs {
+task docs {
     description = 'Generates project documentation.'
     dependsOn javadoc
 }
 
 task dist(type: Zip, dependsOn: ['checkEnv', 'clean', 'build']) {
     description = 'Create project distribution.'
+
+    // Ensure ordered execution of dependent tasks (this is workaround for Gradle design weakness).
+    def tasks = [clean, jar, test, docs]
+    for (int i = 0; i < tasks.size() - 1; i++) {
+        tasks[i + 1].mustRunAfter(tasks[i])
+    }
+    dependsOn(tasks)
+
     classifier = 'dist'
     destinationDir = file(distDir)
     from (workDir) {
-        exclude(['temp', 'tests'])
+        exclude([tempDirName, testsDirName])
     }
     from (configurations.runtime) {
-        into 'library'
+        into libraryDirName
     }
     includeEmptyDirs = false
     into projectName
 }
-clean.mustRunAfter checkEnv
-build.mustRunAfter clean
-generateDocs.mustRunAfter build
-jar.mustRunAfter test
+
 

@@ -17,7 +17,7 @@ public class PdfAnnotationImporterTest extends TestBase {
         AnnotatedDocument document = importer.readAnnotations(resDir + "/Test_Pdf_1.pdf");
         List<Annotation> annotations = document.getAnnotations();
         Annotation annot = annotations.get(0);
-        assertEquals("\u041f\u0435\u0442", annot.getText()); // Пет (Cyrillic).
+        assertEquals("\u041f\u0435\u0442", annot.getText()); // Пет ("five" in Cyrillic).
         assertEquals(1, annotations.size());
     }
 

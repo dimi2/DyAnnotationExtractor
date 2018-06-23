@@ -1,1 +1,2 @@
-java java -cp program;library/* dsk.anotex.ConsoleRunner $1 $2 $3 $4
+#!/bin/bash
+java -cp "program:library/*" dsk.anotex.ConsoleRunner $1 "$2"

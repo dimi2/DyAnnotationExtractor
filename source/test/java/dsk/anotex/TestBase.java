@@ -15,6 +15,8 @@ import java.security.NoSuchAlgorithmException;
  * Base functionality for unit tests.
  */
 public abstract class TestBase {
+    public static final String WORK_DIR = "work";
+    public static final String TEMP_DIR = "temp";
     protected static File workDir;
     protected static File tempDir;
     protected static String resDir;
@@ -23,15 +25,15 @@ public abstract class TestBase {
     public TestBase() {
         super();
         if (workDir == null) {
-            workDir = setupWorkDirectory("work");
-            tempDir = setupTempDirectory("temp");
-            resDir = workDir + "/../resources/test";
+            workDir = setupWorkDirectory(WORK_DIR);
+            tempDir = setupTempDirectory(TEMP_DIR);
+            resDir = workDir + "/testing";
         }
     }
 
     /**
      * Setup working directory to run the tests from.
-     * @param dir Work directory name (relative to project root directory). Null = to use default.
+     * @param dir Work directory name (relative to project root directory). Pass null to use default.
      * @return The work directory.
      */
     protected File setupWorkDirectory(String dir) {
@@ -62,7 +64,7 @@ public abstract class TestBase {
     protected File setupTempDirectory(String dir) {
         File tempDir;
         if (dir == null) {
-            tempDir = new File(workDir, "temp").getAbsoluteFile();
+            tempDir = new File(workDir, TEMP_DIR).getAbsoluteFile();
         }
         else {
             tempDir = new File(dir).getAbsoluteFile();

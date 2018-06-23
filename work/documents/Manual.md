@@ -18,7 +18,7 @@ DyAnnotationExtractor -input "Getting Started with Ubuntu 16.04.pdf"
 
 (this will create file with same name in the same directory, with added '.md' suffix)
 
-Now you have extract of the book which is not 100 but 5-6 pages. You can skim just the exported text instead of re-reading entire book.
+Now you have extract of the book which is not 100 but 5-6 pages. So, you can skim just the exported text instead of re-reading the entire book.
 
 ## Supported Input Formats ##
 
@@ -37,23 +37,24 @@ Now you have extract of the book which is not 100 but 5-6 pages. You can skim ju
 Get the [latest release](https://github.com/dimi2/DyAnnotationExtractor/releases/latest).
 
 
-
 There are separate files for: distribution, binary and sources.<br/>
 End users need to download only the distribution.
 
 ## Installation ##
 
-
-
-
-
-
-
 Extract the downloaded archive in some local directory.<br/>
 Run the provided 'DyAnnotationExtractor' script to perform extraction.
 
+## Build ##
+
+To build the project from sources, you will need [Gradle](https://gradle.org/) build tool.
+Go into the project home directory (PROJ_HOME) and executd command:
+```
+gradle
+```
+The result will appear in directory `PROJ_HOME/build/distributions`.
 
 ## Dependencies ##
 
-- iTextPdf 7.0.2+ (PDF handling library)
+- iTextPdf 7.1.2+ (PDF handling library)
 
