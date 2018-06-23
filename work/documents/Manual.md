@@ -48,7 +48,7 @@ Run the provided 'DyAnnotationExtractor' script to perform extraction.
 ## Build ##
 
 To build the project from sources, you will need [Gradle](https://gradle.org/) build tool.
-Go into the project home directory (PROJ_HOME) and executd command:
+Go into the project home directory (PROJ_HOME) and execute command:
 ```
 gradle
 ```
