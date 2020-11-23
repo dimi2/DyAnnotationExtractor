@@ -87,6 +87,7 @@ public class CommandLineParser {
      *
      * @see #parse(String[])
      */
+    @SuppressWarnings("unused")
     public Map<String, String> getArguments() {
         return args;
     }
@@ -97,6 +98,7 @@ public class CommandLineParser {
      * The result will be [v1, arg2].
      * @return The value without argument name.
      */
+    @SuppressWarnings("unused")
     public List<String> getValues() {
         return values;
     }

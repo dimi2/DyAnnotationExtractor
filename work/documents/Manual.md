@@ -16,7 +16,7 @@ Via the command line:
 DyAnnotationExtractor -input "Getting Started with Ubuntu 16.04.pdf"
 ```
 
-(this will create file with same name in the same directory, with added '.md' suffix)
+(this will create a file with same name in the same directory, with added '.md' suffix)
 
 Now you have extract of the book which is not 100 but 5-6 pages. So, you can skim just the exported text instead of re-reading the entire book.
 

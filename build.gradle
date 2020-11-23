@@ -10,11 +10,9 @@ def programDir = "$workDir/$programDirName"
 def testsDirName = 'tests'
 def testsDir = "$workDir/$testsDirName"
 def libraryDirName = 'library'
-def libraryDir = "$workDir/$libraryDirName"
 def distDir = "$buildDir/distributions"
 def autoDocDir = "$distDir/autodoc"
 def tempDirName = 'temp'
-def tempDir = "$workDir/$tempDirName"
 def minJavaVersion = 1.8
 def minGradleVersion = 2.0
 
@@ -26,19 +24,13 @@ libsDirName = distDir
 // External libraries loader.
 repositories {
     jcenter()
-    flatDir { dirs "${System.properties['user.home']}/.gradle/local" }
 }
 
 dependencies {
-    compile "com.itextpdf:kernel:7.1.2"
-    compile "org.slf4j:slf4j-simple:1.7.25"
+    implementation "com.itextpdf:kernel:7.1.13"
+    implementation "org.slf4j:slf4j-simple:1.7.30"
 
-    testCompile "junit:junit:4.12"
-}
-// Additional JAR directories (when working without dependency management).
-dependencies {
-    compile fileTree(dir: "$workDir/library", include: ['*.jar'])
-    compile fileTree(dir: "$workDir/testing/dev-library", include: ['*.jar'])
+    testImplementation "junit:junit:4.13.1"
 }
 
 // Setup the project source and compilation directories.
@@ -64,9 +56,6 @@ idea {
         //inheritOutputDirs = false
         outputDir file(programDir)
         testOutputDir file(testsDir)
-        // TODO: Check why this exclusion is ignored by Intellij.
-        excludeDirs -= file(workDir)
-        excludeDirs += [file(libraryDir), file(tempDir)]
         downloadJavadoc = true
         downloadSources = true
     }
@@ -84,8 +73,8 @@ compileTestJava {
 build.dependsOn('checkEnv')
 
 jar {
-    baseName = projectName
-    classifier = 'binary'
+    archiveBaseName = projectName
+    archiveClassifier = 'binary'
     manifest {
         attributes(
             'Specification-Title': projectName,
@@ -97,7 +86,7 @@ jar {
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
@@ -125,6 +114,7 @@ task checkEnv {
 
 javadoc {
     destinationDir = file(autoDocDir)
+    options.addStringOption('Xdoclint:none', '-quiet')
 }
 
 task docs {
@@ -142,12 +132,12 @@ task dist(type: Zip, dependsOn: ['checkEnv', 'clean', 'build']) {
     }
     dependsOn(tasks)
 
-    classifier = 'dist'
-    destinationDir = file(distDir)
+    archiveClassifier = 'dist'
+    destinationDirectory = file(distDir)
     from (workDir) {
         exclude([tempDirName, testsDirName])
     }
-    from (configurations.runtime) {
+    from (configurations.runtimeClasspath) {
         into libraryDirName
     }
     includeEmptyDirs = false

@@ -11,12 +11,17 @@ you **highlight** the important parts in your favorite reader:
 
 Then use the DyAnnotationExtractor tool to get just the highlighted parts. 
 
-Via the command line:
+On the comman line execute following command.  
+For Windows:
 ```
 DyAnnotationExtractor -input "Getting Started with Ubuntu 16.04.pdf"
 ```
+For Linux:
+```
+./DyAnnotationExtractor.sh -input "Getting Started with Ubuntu 16.04.pdf"
+```
 
-(this will create file with same name in the same directory, with added '.md' suffix)
+This will create a file with same name in the same directory, with added '.md' suffix.
 
 Now you have extract of the book which is not 100 but 5-6 pages. So, you can skim just the exported text instead of re-reading the entire book.
 

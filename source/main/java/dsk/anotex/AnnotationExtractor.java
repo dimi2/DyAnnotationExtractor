@@ -56,7 +56,6 @@ public class AnnotationExtractor {
         }
         try (Writer output = getOutputWriter(outputFile)) {
             exporter.export(document, settings, output);
-            output.close();
         }
         catch (IOException e) {
             throw new RuntimeException("Extraction error", e);
@@ -122,8 +121,7 @@ public class AnnotationExtractor {
         // But this one is good enough, since the associated importer will parse the file anyway and will
         // detect if the file format is wrong (for example, PNG file, renamed with PDF extension).
         String extension = getFileExtension(fileName);
-        FileFormat format = formats.get(extension);
-        return format;
+        return formats.get(extension);
     }
 
     /**
@@ -157,6 +155,7 @@ public class AnnotationExtractor {
      * Post-process annotated document. This is extension point.
      * @param document The annotated document.
      */
+    @SuppressWarnings("unused")
     protected void postProcess(AnnotatedDocument document) {
     }
 
