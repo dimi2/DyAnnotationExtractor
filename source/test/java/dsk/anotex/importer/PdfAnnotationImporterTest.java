@@ -65,4 +65,12 @@ public class PdfAnnotationImporterTest extends TestBase {
         assertEquals("Awesome!", res4);
     }
 
+    @Test
+    public void testHighlightingBoundaries() {
+        PdfAnnotationImporter importer = new PdfAnnotationImporter();
+        AnnotatedDocument document = importer.readAnnotations(resDir + "/Test_Pdf_6.pdf");
+        List<Annotation> annotations = document.getAnnotations();
+        Annotation annot1 = annotations.get(0);
+        assertEquals("seven eight nine ten eleven twelve thirteen fourteen fifteen", annot1.getText());
+    }
 }

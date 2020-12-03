@@ -34,9 +34,11 @@ public class MarkdownExporter implements AnnotationExporter {
         // TODO: Use specialized Markdown library if the requirements evolve
         // (currently this would be overkill).
         StringBuilder buf = new StringBuilder(1024);
-        buf.append("# ").append(document.getTitle()).append(" #");
-        buf.append(BR);
-        buf.append(BR);
+        if (document.getTitle() != null) {
+            buf.append("# ").append(document.getTitle()).append(" #");
+            buf.append(BR);
+            buf.append(BR);
+        }
         String subject = document.getSubject();
         if (subject != null) {
             buf.append("\"").append(subject).append("\"");

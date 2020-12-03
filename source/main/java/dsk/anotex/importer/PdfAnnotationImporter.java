@@ -5,18 +5,18 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfTextMarkupAnnotation;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.pdf.canvas.parser.filter.TextRegionEventFilter;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.FilteredTextEventListener;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import dsk.anotex.core.AnnotatedDocument;
 import dsk.anotex.core.Annotation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.Arrays;
@@ -27,6 +27,7 @@ import java.util.List;
  * Import annotations form PFD files.
  */
 public class PdfAnnotationImporter implements AnnotationImporter {
+    protected Logger log = LogManager.getLogger(this.getClass());
 
     public AnnotatedDocument readAnnotations(String fileName) {
         // Check the file existence.
@@ -93,23 +94,27 @@ public class PdfAnnotationImporter implements AnnotationImporter {
      */
     protected Annotation convertAnnotation(PdfAnnotation pdfAnnotation) {
         String text = null;
-        PdfArray textCoordinates = pdfAnnotation.getRectangle();
         PdfString pdfText = pdfAnnotation.getContents();
         if (pdfText == null) {
             // The text is not included in the annotation content - extract from highlighted text.
             if (PdfName.Highlight.equals(pdfAnnotation.getSubtype())) {
-                // We should use 'getQuadPoints()' here, but 'getRectangle()' gives better result
-                // (because of variances in PDF standard implementations of QuadPoints).
-                Rectangle highlightedArea = toRectangle(textCoordinates);
-                ITextExtractionStrategy textFilter = new FilteredTextEventListener(
-                    new LocationTextExtractionStrategy(), new TextRegionEventFilter(highlightedArea));
-                String highlightedText = PdfTextExtractor.getTextFromPage(pdfAnnotation.getPage(),
+                PdfTextMarkupAnnotation annotation = (PdfTextMarkupAnnotation) pdfAnnotation;
+                PdfArray textCoordinates = annotation.getRectangle();
+                Rectangle highlightedArea = textCoordinates.toRectangle();
+                log.debug("Rectangle coordinates: " + annotation.getRectangle());
+                PdfTextExtractionStrategy strategy = new PdfTextExtractionStrategy(highlightedArea);
+                FilteredTextEventListener textFilter = new FilteredTextEventListener(
+                    strategy, new TextRegionEventFilter(highlightedArea));
+                String highlightedText = PdfTextExtractor.getTextFromPage(annotation.getPage(),
                     textFilter);
+                log.debug("Highlighted text: " + highlightedText);
+                // TODO: This could be part of the extraction strategy.
                 text = normalizeHighlightedText(highlightedText);
             }
         }
         else {
-            // The text is included in the annotation content - use it directly.
+            // The text is included in the annotation content (this is configurable feature of some PDF
+            // readers). Use that text directly.
             if (pdfText.getEncoding() == null) {
                 text = pdfText.toUnicodeString();
             }
@@ -158,28 +163,14 @@ public class PdfAnnotationImporter implements AnnotationImporter {
      */
     protected String stripDoubleQuotes(String text) {
         String st = text;
-        char dQuota = '"';
-        int endPos = text.length() - 1;
-        if ((text.charAt(0) == dQuota)
-            && (text.charAt(endPos) == dQuota)) {
-            // Remove the surrounding chars.
-            st = text.substring(1, endPos).trim();
+        if (!text.isEmpty()) {
+            char dQuota = '"';
+            int endPos = text.length() - 1;
+            if ((text.charAt(0) == dQuota) && (text.charAt(endPos) == dQuota)) {
+                st = text.substring(1, endPos).trim();
+            }
         }
         return st;
-    }
-
-    /**
-     * Convert array of points, describing to rectangular shape.
-     * The points describe two diagonally opposite points: lower-left / upper-right.
-     * @param rectPoints Quad points.
-     * @return Corresponding rectangle.
-     */
-    protected Rectangle toRectangle(PdfArray rectPoints) {
-        float x1 = ((PdfNumber)rectPoints.get(0)).floatValue();
-        float y1 = ((PdfNumber)rectPoints.get(1)).floatValue();
-        float x3 = ((PdfNumber)rectPoints.get(2)).floatValue();
-        float y3 = ((PdfNumber)rectPoints.get(3)).floatValue();
-        return new Rectangle(x1, y1, (x3 - x1), (y3 - y1));
     }
 
     /**
