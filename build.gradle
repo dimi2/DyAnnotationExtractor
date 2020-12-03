@@ -1,4 +1,12 @@
 // (Gradle) Build script for the project.
+buildscript {
+    ext {
+        iTextPdfVersion = '7.1.13'
+        junitVersion = '4.13.1'
+        log4jVersion = '2.14.0'
+    }
+}
+
 defaultTasks 'dist'
 
 apply plugin: 'java'
@@ -14,7 +22,7 @@ def distDir = "$buildDir/distributions"
 def autoDocDir = "$distDir/autodoc"
 def tempDirName = 'temp'
 def minJavaVersion = 1.8
-def minGradleVersion = 2.0
+def minGradleVersion = 6.0
 
 // Setup plugin specific variables.
 sourceCompatibility = minJavaVersion
@@ -27,10 +35,12 @@ repositories {
 }
 
 dependencies {
-    implementation "com.itextpdf:kernel:7.1.13"
-    implementation "org.slf4j:slf4j-simple:1.7.30"
+    implementation "com.itextpdf:kernel:$iTextPdfVersion"
+    implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
+    implementation "org.apache.logging.log4j:log4j-core:$log4jVersion"
+    implementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
 
-    testImplementation "junit:junit:4.13.1"
+    testImplementation "junit:junit:$junitVersion"
 }
 
 // Setup the project source and compilation directories.
