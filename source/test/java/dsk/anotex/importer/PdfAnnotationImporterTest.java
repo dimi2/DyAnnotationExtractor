@@ -73,4 +73,16 @@ public class PdfAnnotationImporterTest extends TestBase {
         Annotation annot1 = annotations.get(0);
         assertEquals("seven eight nine ten eleven twelve thirteen fourteen fifteen", annot1.getText());
     }
+
+    @Test
+    public void testHighlightingWithContent() {
+        PdfAnnotationImporter importer = new PdfAnnotationImporter();
+        AnnotatedDocument document = importer.readAnnotations(resDir + "/Test_Pdf_7.pdf");
+        List<Annotation> annotations = document.getAnnotations();
+        Annotation annot1 = annotations.get(0);
+        assertEquals("The programs that a home user needs are email, web browser, pdf file viewer, " +
+            "video an music playback software as well as, office program including spreadsheet, " +
+            "word processing and presentation graphics. Today, cloud services, " +
+            "web calls and other social", annot1.getText());
+    }
 }

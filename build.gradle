@@ -1,7 +1,7 @@
 // (Gradle) Build script for the project.
 buildscript {
     ext {
-        iTextPdfVersion = '7.1.13'
+        iTextPdfVersion = '7.1.14'
         junitVersion = '4.13.1'
         log4jVersion = '2.14.0'
     }

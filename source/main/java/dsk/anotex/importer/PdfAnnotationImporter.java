@@ -95,7 +95,17 @@ public class PdfAnnotationImporter implements AnnotationImporter {
     protected Annotation convertAnnotation(PdfAnnotation pdfAnnotation) {
         String text = null;
         PdfString pdfText = pdfAnnotation.getContents();
-        if (pdfText == null) {
+        if (pdfText != null) {
+            // The text is included in the annotation content (this is configurable feature of some PDF
+            // readers). Use that text directly.
+            if (pdfText.getEncoding() == null) {
+                text = pdfText.toUnicodeString();
+            }
+            else {
+                text = pdfText.getValue();
+            }
+        }
+        if ((text == null) || (text.length() == 0)) {
             // The text is not included in the annotation content - extract from highlighted text.
             if (PdfName.Highlight.equals(pdfAnnotation.getSubtype())) {
                 PdfTextMarkupAnnotation annotation = (PdfTextMarkupAnnotation) pdfAnnotation;
@@ -110,16 +120,6 @@ public class PdfAnnotationImporter implements AnnotationImporter {
                 log.debug("Highlighted text: " + highlightedText);
                 // TODO: This could be part of the extraction strategy.
                 text = normalizeHighlightedText(highlightedText);
-            }
-        }
-        else {
-            // The text is included in the annotation content (this is configurable feature of some PDF
-            // readers). Use that text directly.
-            if (pdfText.getEncoding() == null) {
-                text = pdfText.toUnicodeString();
-            }
-            else {
-                text = pdfText.getValue();
             }
         }
 
