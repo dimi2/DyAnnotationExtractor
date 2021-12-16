@@ -1,9 +1,9 @@
 // (Gradle) Build script for the project.
 buildscript {
     ext {
-        iTextPdfVersion = '7.1.14'
-        junitVersion = '4.13.1'
-        log4jVersion = '2.14.0'
+        iTextPdfVersion = '7.1.17'
+        junitVersion = '4.13.2'
+        log4jVersion = '2.16.0'
     }
 }
 
@@ -22,7 +22,7 @@ def distDir = "$buildDir/distributions"
 def autoDocDir = "$distDir/autodoc"
 def tempDirName = 'temp'
 def minJavaVersion = 1.8
-def minGradleVersion = 6.0
+def minGradleVersion = 7.0
 
 // Setup plugin specific variables.
 sourceCompatibility = minJavaVersion
@@ -31,7 +31,7 @@ libsDirName = distDir
 
 // External libraries loader.
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -48,13 +48,13 @@ sourceSets {
     main {
         java {
             srcDir "source/main/java"
-            outputDir = file(programDir)
+            java.destinationDirectory.set(file(programDir))
         }
     }
     test {
         java {
             srcDir "source/test/java"
-            outputDir = file(testsDir)
+            java.destinationDirectory.set(file(testsDir))
         }
     }
 }
@@ -63,7 +63,6 @@ sourceSets {
 apply plugin: 'idea'
 idea {
     module {
-        //inheritOutputDirs = false
         outputDir file(programDir)
         testOutputDir file(testsDir)
         downloadJavadoc = true
