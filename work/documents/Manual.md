@@ -30,15 +30,14 @@ Now you have extract of the book which is not 100 but 5-6 pages. So, you can ski
 
 ## Requirements ##
 
-- Java 8+.
+- Java 21+.
 
 ## Download ##
 
 Get the [latest release](https://github.com/dimi2/DyAnnotationExtractor/releases/latest).
 
 
-There are separate files for: distribution, binary and sources.<br/>
-End users need to download only the distribution.
+End users need to download only the distribution jar.
 
 ## Installation ##
 
@@ -52,9 +51,6 @@ Go into the project home directory (PROJ_HOME) and execute command:
 ```
 gradle
 ```
-The result will appear in directory `PROJ_HOME/build/distributions`.
+The result will appear in directory `PROJ_HOME/build/distribution`.
 
-## Dependencies ##
-
-- iTextPdf 7.1.2+ (PDF handling library)
 

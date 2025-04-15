@@ -1,13 +1,13 @@
 package dsk.anotex;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -85,7 +85,7 @@ public abstract class TestBase {
         if (tempDir != null) {
             if (tempDir.isDirectory()) {
                 File[] files = tempDir.listFiles();
-                if ((files != null) && (files.length > 0)) {
+                if (files != null) {
                     for (File file : files) {
                         removeDirectory(file);
                     } //
@@ -95,13 +95,13 @@ public abstract class TestBase {
     }
 
     /**
-     * Remove specified directory with its sub-directories.
+     * Remove specified directory with its subdirectories.
      * @param dir Directory name.
      */
     protected void removeDirectory(File dir) {
         if (dir.isDirectory()) {
             File[] files = dir.listFiles();
-            if ((files != null) && (files.length > 0)) {
+            if (files != null) {
                 for (File file : files) {
                     removeDirectory(file);
                 } //
@@ -127,7 +127,8 @@ public abstract class TestBase {
             if (bufSize > 0) {
                 try {
                     char[] buf = new char[bufSize];
-                    Reader f = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+                    Reader f = new InputStreamReader(Files.newInputStream(file.toPath()),
+                        StandardCharsets.UTF_8);
                     int read;
                     while ((read = f.read(buf, 0, bufSize)) != -1) {
                         content.append(buf, 0, read);

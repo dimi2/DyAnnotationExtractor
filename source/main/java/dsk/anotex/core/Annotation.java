@@ -3,7 +3,7 @@ package dsk.anotex.core;
 import java.io.Serializable;
 
 /**
- * Represents document annotation (highlight/comment). It is independent from the document format.
+ * Represents document annotation (highlight/comment). It is independent of the document format.
  */
 public class Annotation implements Serializable {
     protected String text;

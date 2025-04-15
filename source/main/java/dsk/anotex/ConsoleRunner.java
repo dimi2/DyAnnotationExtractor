@@ -48,8 +48,7 @@ public class ConsoleRunner {
      * @return Start message.
      */
     protected String getStartMessage() {
-        return String.format("%s %s (document annotation extractor)", Constants.APP_NAME,
-            Constants.APP_VERSION);
+        return String.format("%s (document annotation extractor)", Constants.APP_NAME);
     }
 
     /**

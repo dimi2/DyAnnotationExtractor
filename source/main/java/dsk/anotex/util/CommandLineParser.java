@@ -120,7 +120,7 @@ public class CommandLineParser {
 
         for (int i = 0; i < args.length; i++) {
             String s = args[i];
-            if ((s == null) || (s.length() == 0)) {
+            if ((s == null) || (s.isEmpty())) {
                 // Invalid argument. Skip it.
                 continue;
             }

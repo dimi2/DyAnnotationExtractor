@@ -11,7 +11,7 @@ you **highlight** the important parts in your favorite reader:
 
 Then use the DyAnnotationExtractor tool to get just the highlighted parts. 
 
-On the comman line execute following command.  
+On the command line execute following command.  
 For Windows:
 ```
 DyAnnotationExtractor -input "Getting Started with Ubuntu 16.04.pdf"

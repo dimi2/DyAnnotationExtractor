@@ -105,19 +105,19 @@ public class PdfAnnotationImporter implements AnnotationImporter {
                 text = pdfText.getValue();
             }
         }
-        if ((text == null) || (text.length() == 0)) {
+        if ((text == null) || (text.isEmpty())) {
             // The text is not included in the annotation content - extract from highlighted text.
             if (PdfName.Highlight.equals(pdfAnnotation.getSubtype())) {
                 PdfTextMarkupAnnotation annotation = (PdfTextMarkupAnnotation) pdfAnnotation;
                 PdfArray textCoordinates = annotation.getRectangle();
                 Rectangle highlightedArea = textCoordinates.toRectangle();
-                log.debug("Rectangle coordinates: " + annotation.getRectangle());
+                log.debug("Rectangle coordinates: {}", annotation.getRectangle());
                 PdfTextExtractionStrategy strategy = new PdfTextExtractionStrategy(highlightedArea);
                 FilteredTextEventListener textFilter = new FilteredTextEventListener(
                     strategy, new TextRegionEventFilter(highlightedArea));
                 String highlightedText = PdfTextExtractor.getTextFromPage(annotation.getPage(),
                     textFilter);
-                log.debug("Highlighted text: " + highlightedText);
+                log.debug("Highlighted text: {}", highlightedText);
                 // TODO: This could be part of the extraction strategy.
                 text = normalizeHighlightedText(highlightedText);
             }

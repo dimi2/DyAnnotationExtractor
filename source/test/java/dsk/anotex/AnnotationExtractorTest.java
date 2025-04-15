@@ -2,24 +2,29 @@ package dsk.anotex;
 
 import dsk.anotex.core.AnnotatedDocument;
 import dsk.anotex.core.Annotation;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AnnotationExtractorTest extends TestBase {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testMissingFile() {
         AnnotationExtractor extractor = new AnnotationExtractor();
-        extractor.readAnnotations(resDir + "/Missing.pdf");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            extractor.readAnnotations(resDir + "/Missing.pdf");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testUnsupportedFile() {
         AnnotationExtractor extractor = new AnnotationExtractor();
-        extractor.readAnnotations(resDir + "/Test_Pdf_4.pdf");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            extractor.readAnnotations(resDir + "/Test_Pdf_4.pdf");
+        });
     }
 
     @Test
@@ -27,7 +32,7 @@ public class AnnotationExtractorTest extends TestBase {
         AnnotationExtractor extractor = new AnnotationExtractor();
         AnnotatedDocument document = extractor.readAnnotations(resDir + "/Test_Pdf_5.pdf");
         List<Annotation> annotations = document.getAnnotations();
-        Annotation annot = annotations.get(0);
+        Annotation annot = annotations.getFirst();
         assertEquals("One Two", annot.getText());
         assertEquals(1, annotations.size());
     }

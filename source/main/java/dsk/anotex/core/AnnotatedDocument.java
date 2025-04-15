@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Represents annotated document. It is independent from the original document format.
+ * Represents annotated document. It is independent of the original document format.
  */
 public class AnnotatedDocument implements Serializable {
     protected String title;

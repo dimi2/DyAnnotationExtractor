@@ -9,11 +9,11 @@ import dsk.anotex.importer.ImporterFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -101,7 +101,7 @@ public class AnnotationExtractor {
         // Crate buffered file writer.
         Writer writer;
         try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
+            writer = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(outFile.toPath()),
                 StandardCharsets.UTF_8));
         }
         catch (IOException e) {
